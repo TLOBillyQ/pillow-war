@@ -1,6 +1,10 @@
 node_modules
 dist
 out
+# APS acceptance pipeline: vendored tools + generated artifacts (regenerated, never committed)
+tools/
+build/
+acceptance/generated/
 *.log
 .env
 .DS_Store

@@ -9,7 +9,10 @@
     "build": "gsts",
     "dev": "gsts dev",
     "maps": "gsts maps",
-    "backup": "gsts open backup"
+    "backup": "gsts open backup",
+    "acceptance": "acceptance/run.sh",
+    "acceptance:mutate": "acceptance/mutate.sh",
+    "acceptance:typecheck": "tsc -p acceptance/tsconfig.json"
   },
   "dependencies": {
     "genshin-ts": "latest"
