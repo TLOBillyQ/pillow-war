@@ -6,3 +6,13 @@ out
 .DS_Store
 *.gia
 .idea
+.claude/
+.swarmforge/
+.worktrees/
+swarmforge/scripts/*
+!swarmforge/scripts/terminal-adapters/
+!swarmforge/scripts/swarm-terminal-adapter.sh
+!swarmforge/scripts/swarmforge.bb
+!swarmforge/scripts/kimi-prompt-injector.sh
+swarmforge/scripts/terminal-adapters/*
+!swarmforge/scripts/terminal-adapters/otty.sh
