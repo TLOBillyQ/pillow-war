@@ -7,6 +7,7 @@
 
 (def session-prefix "swarmforge")
 (def agent-window "swarm")
+(def known-agents #{"claude" "codex" "copilot" "grok" "kimi"})
 (def red "\u001b[0;31m")
 (def green "\u001b[0;32m")
 (def yellow "\u001b[1;33m")
@@ -166,7 +167,7 @@
                   (fail! (str red "Error:" reset " Duplicate worktree '" worktree "' in " (:config-file ctx))))
                 (when (or (str/includes? worktree "/") (#{"." ".."} worktree))
                   (fail! (str red "Error:" reset " Invalid worktree '" worktree "' for role '" role "'")))
-                (when-not (#{"claude" "codex" "copilot" "grok" "kimi"} agent)
+                (when-not (known-agents agent)
                   (fail! (str red "Error:" reset " Unsupported agent '" agent "' for role '" role "'")))
                 (when-not (#{"task" "batch"} receive-mode)
                   (fail! (str red "Error:" reset " Invalid receive mode '" receive-mode "' for role '" role "' on line " line-no ": expected task or batch")))
@@ -190,7 +191,10 @@
         (do
           (when (empty? rows)
             (fail! (str red "Error:" reset " No windows defined in " (:config-file ctx))))
-          (assoc ctx :roles rows))))))
+          (let [rows (if-let [agent-override (:agent-override ctx)]
+                       (map #(assoc % :agent agent-override) rows)
+                       rows)]
+            (assoc ctx :roles rows)))))))
 
 (defn write-sessions-file! [ctx]
   (spit (str (:sessions-file ctx))
@@ -487,13 +491,16 @@
      :tmux-window-base-index 0
      :tmux-pane-base-index 0}))
 
-(defn prepare-ctx [ctx]
-  (-> ctx
-      parse-config
-      (assoc :terminal-backend (detect-terminal-backend))))
+(defn prepare-ctx
+  ([ctx] (prepare-ctx ctx nil))
+  ([ctx agent-override]
+   (-> ctx
+       (assoc :agent-override agent-override)
+       parse-config
+       (assoc :terminal-backend (detect-terminal-backend)))))
 
-(defn test-parse! [root]
-  (let [ctx (prepare-ctx (context root))]
+(defn test-parse! [root & [agent-override]]
+  (let [ctx (prepare-ctx (context root) agent-override)]
     (prepare-workspace! ctx)
     (doseq [row (:roles ctx)]
       (println (str (:role row) " " (:display-name row) " " (:worktree-path row) " "
@@ -502,7 +509,7 @@
     (print (slurp (str (:roles-file ctx))))
     (print (slurp (str (:sessions-file ctx))))))
 
-(defn run-main! [root]
+(defn run-main! [root & [agent-override]]
   (check-dependency! "tmux")
   (check-dependency! "git")
   (check-dependency! "bb")
@@ -510,7 +517,7 @@
                 detect-tmux-base-indexes)]
     (initialize-git-repo! ctx)
     (ensure-runtime-git-excludes! ctx)
-    (let [ctx (prepare-ctx ctx)]
+    (let [ctx (prepare-ctx ctx agent-override)]
       (check-backend-dependencies! ctx)
       (prepare-workspace! ctx)
       (prepare-worktrees! ctx)
@@ -525,6 +532,9 @@
         (println "  SwarmForge v1.0 Starting")
         (println "  Disciplined agents build better software")
         (println reset)
+        (when-let [agent-override (:agent-override ctx)]
+          (println (str yellow "  Agent override: " (str/capitalize agent-override) reset))
+          (println))
         (println (str green "Launching SwarmForge tmux sessions..." reset))
         (doseq [row (:roles ctx)]
           (create-role-session! ctx (:session row) (:display-name row)))
@@ -598,16 +608,21 @@
   (println (str/join " " (or (sleep-inhibitor-prefix) []))))
 
 (defn -main [& args]
-  (case (first args)
-    "--test-parse" (test-parse! (or (second args) (System/getProperty "user.dir")))
-    "--test-terminal-bridge" (test-terminal-bridge! (or (second args) (System/getProperty "user.dir")) (nth args 2))
-    "--test-launch-command" (apply test-launch-command!
-                                     (or (second args) (System/getProperty "user.dir"))
-                                     (drop 2 args))
-    "--test-kimi-prompt-routing" (test-kimi-prompt-routing! (or (second args) (System/getProperty "user.dir")))
-    "--test-agent-start-delay" (println (env-long "SWARMFORGE_AGENT_START_DELAY_MS" 1500))
-    "--test-sleep-inhibitor-prefix" (test-sleep-inhibitor-prefix!)
-    "--test-tmux-base-indexes" (test-tmux-base-indexes! (second args))
-    (run-main! (or (first args) (System/getProperty "user.dir")))))
+  (let [agent-override (when (and (seq args)
+                                  (not (str/starts-with? (first args) "--"))
+                                  (known-agents (str/lower-case (first args))))
+                         (str/lower-case (first args)))
+        remaining-args (if agent-override (rest args) args)]
+    (case (first remaining-args)
+      "--test-parse" (test-parse! (or (second remaining-args) (System/getProperty "user.dir")) agent-override)
+      "--test-terminal-bridge" (test-terminal-bridge! (or (second remaining-args) (System/getProperty "user.dir")) (nth remaining-args 2))
+      "--test-launch-command" (apply test-launch-command!
+                                     (or (second remaining-args) (System/getProperty "user.dir"))
+                                     (drop 2 remaining-args))
+      "--test-kimi-prompt-routing" (test-kimi-prompt-routing! (or (second remaining-args) (System/getProperty "user.dir")))
+      "--test-agent-start-delay" (println (env-long "SWARMFORGE_AGENT_START_DELAY_MS" 1500))
+      "--test-sleep-inhibitor-prefix" (test-sleep-inhibitor-prefix!)
+      "--test-tmux-base-indexes" (test-tmux-base-indexes! (second remaining-args))
+      (run-main! (or (first remaining-args) (System/getProperty "user.dir")) agent-override))))
 
 (apply -main *command-line-args*)
