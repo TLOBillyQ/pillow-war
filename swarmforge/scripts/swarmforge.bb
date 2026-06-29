@@ -338,7 +338,7 @@
                 (case agent
                   "claude" (str "claude --append-system-prompt-file " (sq (str prompt-file)) " --dangerously-skip-permissions -n " (sq (str "SwarmForge " display)) " " (extra-args-prefix row) "\"$(cat " (sq (str prompt-file)) ")\"")
                   "codex" (str "codex -C " (sq (str role-worktree)) " --yolo " (extra-args-prefix row) "\"$(cat " (sq (str prompt-file)) ")\"")
-                  "kimi" (str "kimi --yolo --add-dir " (sq (str role-worktree)) (when (seq (:extra-args row)) (str " " (:extra-args row))))
+                  "kimi" (str "{ cat " (sq (str prompt-file)) "; printf '\\r'; } | kimi --add-dir " (sq (str role-worktree)) (when (seq (:extra-args row)) (str " " (:extra-args row))))
                   "copilot" (str "copilot -C " (sq (str role-worktree)) " --name " (sq (str "SwarmForge " display)) " " (extra-args-prefix row) "-i \"$(cat " (sq (str prompt-file)) ")\"")
                   "grok" (str "grok --cwd " (sq (str role-worktree)) " " (grok-permission-prefix row) (extra-args-prefix row) "--rules \"$(cat " (sq (str prompt-file)) ")\" --verbatim \"$(cat " (sq (str prompt-file)) ")\"")))
       (= index 0)
@@ -349,27 +349,13 @@
            (apply str (map #(str " " (sq (:session %))) (:roles ctx)))
            " >/dev/null 2>&1 &!; exit $exit_code"))))
 
-(defn send-initial-kimi-prompt! [ctx index row prompt-file]
-  ;; Launch a detached shell process to inject the prompt after the TUI is ready.
-  ;; We cannot use a Clojure future because the main thread exits before the
-  ;; injection delay elapses, and daemon futures are terminated.
-  (let [target (tmux-agent-target (:display-name row) (:tmux-pane-base-index ctx) (:session row))
-        delay-seconds (inc index)
-        injector (str (fs/path (:script-dir ctx) "kimi-prompt-injector.sh"))
-        shell-cmd (str "nohup " (sq injector) " " (sq (:tmux-socket ctx)) " " (sq target) " " (sq (str prompt-file)) " " delay-seconds " >/dev/null 2>&1 &")]
-    (process/process ["zsh" "-c" shell-cmd] {:out :inherit :err :inherit})
-    (println (str "  " cyan "[" (:display-name row) "]" reset " prompt injector scheduled in " delay-seconds "s"))))
-
 (defn launch-role! [ctx index row]
   (let [session (:session row)
         display (:display-name row)
-        prompt-file (fs/path (:prompts-dir ctx) (str (:role row) ".md"))
         command (launch-command ctx index row)]
     (sh "tmux" "-S" (:tmux-socket ctx) "send-keys" "-t"
         (tmux-agent-target display (:tmux-pane-base-index ctx) session)
         command "Enter")
-    (when (= "kimi" (:agent row))
-      (send-initial-kimi-prompt! ctx index row prompt-file))
     (println (str "  " cyan "[" display "]" reset " started in session " session))))
 
 (defn stop-handoff-daemon! [ctx]
@@ -587,6 +573,27 @@
     (fs/create-dirs (:prompts-dir ctx))
     (println (launch-command ctx 1 row))))
 
+(defn test-kimi-prompt-routing! [root]
+  ;; Regression test: the kimi launch command must route the role prompt file
+  ;; into kimi's stdin so the initial prompt is submitted on startup.
+  (let [ctx (assoc (context root) :terminal-backend "none")
+        role "specifier"
+        prompt-file (fs/path (:prompts-dir ctx) (str role ".md"))
+        row {:role role
+             :agent "kimi"
+             :session "swarmforge-specifier"
+             :display-name "Specifier"
+             :worktree-name "master"
+             :worktree-path (fs/path root)
+             :receive-mode "task"
+             :extra-args "--yolo"}
+        command (launch-command ctx 0 row)]
+    (when-not (and (str/includes? command (str "{ cat " (sq (str prompt-file))))
+                   (str/includes? command "; printf '\\r'; } | kimi")
+                   (str/includes? command "--add-dir"))
+      (fail! (str red "Regression:" reset " kimi launch command does not route prompt file through stdin.\n"
+                  "Command: " command)))))
+
 (defn test-sleep-inhibitor-prefix! []
   (println (str/join " " (or (sleep-inhibitor-prefix) []))))
 
@@ -597,6 +604,7 @@
     "--test-launch-command" (apply test-launch-command!
                                      (or (second args) (System/getProperty "user.dir"))
                                      (drop 2 args))
+    "--test-kimi-prompt-routing" (test-kimi-prompt-routing! (or (second args) (System/getProperty "user.dir")))
     "--test-agent-start-delay" (println (env-long "SWARMFORGE_AGENT_START_DELAY_MS" 1500))
     "--test-sleep-inhibitor-prefix" (test-sleep-inhibitor-prefix!)
     "--test-tmux-base-indexes" (test-tmux-base-indexes! (second args))
