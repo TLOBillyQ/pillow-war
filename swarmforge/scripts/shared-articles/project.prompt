@@ -1,10 +1,13 @@
 # Project Rules
 
 ## Project Shape
-- This project is configured for SwarmForge with two Codex-backed agents:
+- This project is configured for SwarmForge with two Claude-backed agents:
   coder and cleaner.
 - The coder is the master worktree role.
-- Project language: Babashka.
+- Project language: TypeScript (genshin-ts). The codebase under development and
+  all behavior verification use the genshin-ts/TypeScript toolchain.
+- The SwarmForge handoff helper scripts under `swarmforge/scripts/` are
+  Babashka; that is orchestration tooling, not the project under development.
 
 ## Local Configuration
 - Preserve project-local SwarmForge configuration under `swarmforge/`.
