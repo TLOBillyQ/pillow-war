@@ -47,6 +47,7 @@
     ("iterm" "iterm2" "iterm.app") "iterm2"
     ("terminal" "terminal-app" "terminal.app") "terminal-app"
     ("windows" "windows-terminal" "wt") "windows-terminal"
+    ("otty" "otty.app") "otty"
     ("none" "current" "fallback") "none"
     (str/lower-case backend)))
 
@@ -54,6 +55,11 @@
   (if-let [backend (System/getenv "SWARMFORGE_TERMINAL")]
     (normalize-terminal-backend backend)
     (cond
+      ;; Otty exposes its own control CLI; detect it before the osascript branch
+      ;; since Otty also ships osascript and would otherwise fall back to Terminal.
+      (and (command-exists? "otty")
+           (or (= (System/getenv "TERM_PROGRAM") "otty")
+               (System/getenv "OTTY_BIN_DIR"))) "otty"
       (command-exists? "osascript") (if (= (System/getenv "TERM_PROGRAM") "iTerm.app")
                                       "iterm2"
                                       "terminal-app")
@@ -231,7 +237,7 @@
    "swarm-terminal-adapter.sh" "swarmforge.sh" "swarmforge.bb"])
 
 (def terminal-helpers
-  ["terminal-app.sh" "iterm2.sh" "ghostty.sh" "windows-terminal.sh" "none.sh"])
+  ["terminal-app.sh" "iterm2.sh" "ghostty.sh" "otty.sh" "windows-terminal.sh" "none.sh"])
 
 (defn check-helper-scripts! [ctx]
   (doseq [helper required-helpers]

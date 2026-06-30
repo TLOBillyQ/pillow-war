@@ -15,6 +15,9 @@ normalize_terminal_backend() {
     windows|windows-terminal|wt)
       echo "windows-terminal"
       ;;
+    otty|otty.app)
+      echo "otty"
+      ;;
     none|current|fallback)
       echo "none"
       ;;
@@ -27,6 +30,11 @@ normalize_terminal_backend() {
 detect_terminal_backend() {
   if [[ -n "${SWARMFORGE_TERMINAL:-}" ]]; then
     normalize_terminal_backend "$SWARMFORGE_TERMINAL"
+    return
+  fi
+
+  if command -v otty >/dev/null 2>&1 && { [[ "${TERM_PROGRAM:-}" == "otty" ]] || [[ -n "${OTTY_BIN_DIR:-}" ]]; }; then
+    echo "otty"
     return
   fi
 
