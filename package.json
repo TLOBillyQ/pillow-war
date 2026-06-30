@@ -6,26 +6,40 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
+    "test": "node --test 'test/**/*.test.ts'",
+    "test:typecheck": "tsc -p test/tsconfig.json",
     "build": "gsts",
     "dev": "gsts dev",
     "maps": "gsts maps",
     "backup": "gsts open backup",
     "acceptance": "acceptance/run.sh",
     "acceptance:mutate": "acceptance/mutate.sh",
-    "acceptance:typecheck": "tsc -p acceptance/tsconfig.json"
+    "acceptance:typecheck": "tsc -p acceptance/tsconfig.json",
+    "test:prop": "node --test 'test/**/*.prop.ts'",
+    "coverage": "c8 node --test 'test/**/*.test.ts'",
+    "dry": "jscpd",
+    "crap": "node scripts/crap.mjs",
+    "mutate:scan": "node scripts/mutate-scan.mjs"
   },
   "dependencies": {
     "genshin-ts": "latest"
   },
   "devDependencies": {
-    "@types/node": "^24.10.1",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
+    "@stryker-mutator/instrumenter": "^9.6.1",
+    "@types/node": "^24.10.1",
     "@typescript-eslint/eslint-plugin": "^8.47.0",
     "@typescript-eslint/parser": "^8.47.0",
+    "c8": "^11.0.0",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
+    "fast-check": "^4.8.0",
+    "jscpd": "^5.0.11",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true
   }
 }

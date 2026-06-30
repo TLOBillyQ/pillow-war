@@ -1,0 +1,9 @@
+{
+  "//": "Coverage for the testable core, measured by wrapping the node:test unit suite. Outputs istanbul coverage-final.json (consumed by scripts/crap.mjs). Mirrors scripts/lib/testable.mjs: graph-adapter shells and non-src dirs are excluded.",
+  "all": true,
+  "src": ["src"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["src/main.ts", "src/**/*.entry.ts", "src/**/*.gs.ts", "src/**/*.d.ts", "test/**", "acceptance/**", "tools/**", "build/**"],
+  "reporter": ["text", "json"],
+  "reports-dir": "coverage"
+}

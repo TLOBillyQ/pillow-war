@@ -1,0 +1,17 @@
+{
+  "//": "Shared TypeScript profile for off-graph Node code (acceptance/ and test/). These run via Node's native TS execution, NOT the gsts node-graph compiler, so they stay isolated from the root gsts tsconfig. Each consumer extends this and supplies only its own include list. Not named tsconfig.json on purpose: typescript-eslint project discovery must not pick it up.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": []
+}

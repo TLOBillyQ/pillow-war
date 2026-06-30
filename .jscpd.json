@@ -1,0 +1,10 @@
+{
+  "path": ["src"],
+  "pattern": "**/*.ts",
+  "ignore": ["**/*.test.ts", "**/*.prop.ts", "**/*.d.ts", "**/node_modules/**", "dist/**"],
+  "format": ["typescript"],
+  "reporters": ["console", "json"],
+  "output": "reports/jscpd",
+  "minTokens": 50,
+  "gitignore": true
+}
