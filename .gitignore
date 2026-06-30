@@ -1,19 +1,5 @@
-node_modules
-dist
-out
-# Analysis & test artifacts (refactorer tooling)
-coverage/
-reports/
-.stryker-tmp/
-tmp/
-# APS acceptance pipeline: vendored tools + generated artifacts (regenerated, never committed)
-tools/
-build/
-acceptance/generated/
-*.log
-.env
 .DS_Store
-*.gia
-.idea
+.env
 .claude/
-docs/design/~$*.docx
+.swarmforge/
+.worktrees/
