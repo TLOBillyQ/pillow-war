@@ -16,12 +16,4 @@ acceptance/generated/
 *.gia
 .idea
 .claude/
-.swarmforge/
-.worktrees/
-swarmforge/scripts/*
-!swarmforge/scripts/terminal-adapters/
-!swarmforge/scripts/swarm-terminal-adapter.sh
-!swarmforge/scripts/swarmforge.bb
-swarmforge/scripts/terminal-adapters/*
 docs/design/~$*.docx
-!swarmforge/scripts/terminal-adapters/otty.sh
