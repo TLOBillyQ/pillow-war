@@ -1,0 +1,218 @@
+{
+  "project": "枕头大战 v1.3",
+  "releases": [
+    {"name": "Release 1", "description": "MVP 核心对战体验"},
+    {"name": "Release 2", "description": "完整难度 + 体验优化"},
+    {"name": "Release 3", "description": "无尽挑战 + 排行榜 + 成就"}
+  ],
+  "epics": [
+    {
+      "name": "核心战斗玩法",
+      "features": [
+        {
+          "name": "玩家操控",
+          "stories": [
+            {"name": "玩家在限定区域移动", "priority": "must", "release": "Release 1", "points": 3, "description": "玩家只能在平面上的固定区域移动"},
+            {"name": "右键进入瞄准模式（第三人称视角）", "priority": "must", "release": "Release 1", "points": 5, "description": "类似TPS视角，生成瞄准线，鼠标移动控制方向"},
+            {"name": "左键投掷枕头", "priority": "must", "release": "Release 1", "points": 3, "description": "瞄准后点击左键投出枕头，无枕头自动退出瞄准"},
+            {"name": "枕头直线飞行轨迹", "priority": "must", "release": "Release 1", "points": 2, "description": "双方枕头均沿直线飞行"}
+          ]
+        },
+        {
+          "name": "少女攻击",
+          "stories": [
+            {"name": "少女按路线移动（简单难度）", "priority": "must", "release": "Release 1", "points": 3, "description": "简单难度：左右直线路线移动"},
+            {"name": "少女每4秒攻击一次", "priority": "must", "release": "Release 1", "points": 3, "description": "正常模式下每4秒消耗1个枕头攻击一次"},
+            {"name": "少女攻击5次后休息4秒", "priority": "must", "release": "Release 1", "points": 3, "description": "休息期间停止移动和攻击，发送特殊气泡语言"},
+            {"name": "枕头命中判定", "priority": "must", "release": "Release 1", "points": 2, "description": "命中则对方得分，不增加被击中方枕头"},
+            {"name": "枕头未命中落地，玩家拾取", "priority": "must", "release": "Release 1", "points": 3, "description": "未命中掉在地上，玩家拾取后获得枕头"},
+            {"name": "少女拾取技能球获取枕头", "priority": "should", "release": "Release 2", "points": 4, "description": "少女枕头用完时偏离路线去拾取技能球"},
+            {"name": "狂欢时刻少女飞行模式", "priority": "should", "release": "Release 2", "points": 5, "description": "开眼解封，闪现至随机位置，垂直下落攻击"},
+            {"name": "狂欢时刻少女被击中5次后眩晕5秒", "priority": "should", "release": "Release 2", "points": 3, "description": "眩晕时停止移动和攻击，给予玩家全部6个枕头"}
+          ]
+        },
+        {
+          "name": "分数与胜负",
+          "stories": [
+            {"name": "得分机制（双方击中得分）", "priority": "must", "release": "Release 1", "points": 2, "description": "少女击中玩家则少女得分，反之玩家得分"},
+            {"name": "游戏计时2分钟与结算", "priority": "must", "release": "Release 1", "points": 3, "description": "时间到结束游戏，比较双方得分判定胜负"},
+            {"name": "前1分钟正常+后1分钟狂欢时刻", "priority": "must", "release": "Release 1", "points": 3, "description": "后半时间进入狂欢模式，攻击频率加快，技能冷却加快"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "技能系统",
+      "features": [
+        {
+          "name": "技能产出",
+          "stories": [
+            {"name": "随机在玩家场地产生技能球", "priority": "must", "release": "Release 1", "points": 3, "description": "玩家通过拾取技能球获得技能使用次数"}
+          ]
+        },
+        {
+          "name": "仆人技能",
+          "stories": [
+            {"name": "为玩家开启保护罩，拦截1次攻击，获得2发弹药", "priority": "must", "release": "Release 1", "points": 3, "description": "基础防护功能"},
+            {"name": "冷却15秒，狂欢时刻为7秒", "priority": "must", "release": "Release 1", "points": 2, "description": "狂欢模式下冷却减半"}
+          ]
+        },
+        {
+          "name": "女士技能",
+          "stories": [
+            {"name": "发射必中枕头攻击，使少女晕眩3秒", "priority": "must", "release": "Release 1", "points": 3, "description": "不消耗玩家弹药，不增加得分，使少女停止移动和攻击"},
+            {"name": "冷却30秒，狂欢时刻为15秒", "priority": "must", "release": "Release 1", "points": 2, "description": "狂欢模式下冷却减半"}
+          ]
+        },
+        {
+          "name": "翻滚技能",
+          "stories": [
+            {"name": "玩家进行一小段冲刺，通过体力条限制", "priority": "should", "release": "Release 2", "points": 3, "description": "位移闪避技能"}
+          ]
+        },
+        {
+          "name": "蛋糕技能",
+          "stories": [
+            {"name": "获得额外一个枕头，10秒冷却", "priority": "should", "release": "Release 2", "points": 3, "description": "此枕头不增加总数，击中或未击中后都直接消失"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "难度与挑战系统",
+      "features": [
+        {
+          "name": "难度系统",
+          "stories": [
+            {"name": "简单难度：左右直线路线", "priority": "must", "release": "Release 1", "points": 3, "description": "新手教程专用难度"},
+            {"name": "普通难度：左右跳跃路线", "priority": "should", "release": "Release 2", "points": 3, "description": "解锁条件：通过简单难度"},
+            {"name": "困难难度：椭圆形路线", "priority": "should", "release": "Release 2", "points": 3, "description": "解锁条件：通过普通难度"},
+            {"name": "挑战难度：无限形路线（横置8）", "priority": "could", "release": "Release 2", "points": 4, "description": "解锁条件：通过困难难度"}
+          ]
+        },
+        {
+          "name": "无尽挑战",
+          "stories": [
+            {"name": "无限时长，1分钟正常+1分钟狂欢交替", "priority": "could", "release": "Release 3", "points": 4, "description": "持续挑战模式"},
+            {"name": "每分钟减少攻击冷却（最低1秒）", "priority": "could", "release": "Release 3", "points": 3, "description": "时间越久少女攻击越快"},
+            {"name": "玩家5点生命值，归零结束挑战", "priority": "could", "release": "Release 3", "points": 3, "description": "被击中一次扣1点生命"},
+            {"name": "结算存活时间和命中球数", "priority": "could", "release": "Release 3", "points": 3, "description": "UI中显示挑战结束、存活时间和命中数"},
+            {"name": "少女每15秒随机切换路线", "priority": "could", "release": "Release 3", "points": 4, "description": "从4种路线中随机选取"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "游戏流程与UI",
+      "features": [
+        {
+          "name": "标题界面",
+          "stories": [
+            {"name": "新的游戏 + 难度选择面板", "priority": "must", "release": "Release 1", "points": 3, "description": "点击开始弹出难度选择面板"},
+            {"name": "退出游戏", "priority": "must", "release": "Release 1", "points": 1, "description": "返回桌面"},
+            {"name": "游戏设置（音量修改）", "priority": "should", "release": "Release 2", "points": 2, "description": "弹出设置面板修改音量"}
+          ]
+        },
+        {
+          "name": "加载界面",
+          "stories": [
+            {"name": "插图过场画面", "priority": "should", "release": "Release 2", "points": 2, "description": "场景切换时的加载画面"}
+          ]
+        },
+        {
+          "name": "局内HUD",
+          "stories": [
+            {"name": "比分显示", "priority": "must", "release": "Release 1", "points": 2, "description": "实时显示双方得分"},
+            {"name": "枕头数量显示", "priority": "should", "release": "Release 2", "points": 2, "description": "当前拥有枕头数量"},
+            {"name": "技能冷却显示", "priority": "should", "release": "Release 2", "points": 2, "description": "技能冷却状态可视化"}
+          ]
+        },
+        {
+          "name": "结算界面",
+          "stories": [
+            {"name": "胜负判定与画面", "priority": "must", "release": "Release 1", "points": 3, "description": "胜利/失败各一套画面，大于等于少女得分则胜利"},
+            {"name": "比分和技能使用统计", "priority": "must", "release": "Release 1", "points": 3, "description": "显示双方得分和玩家技能使用数"},
+            {"name": "返回标题和再来一局按钮", "priority": "must", "release": "Release 1", "points": 2, "description": "游戏结束后导航"}
+          ]
+        },
+        {
+          "name": "新手教程",
+          "stories": [
+            {"name": "简单难度首次进入触发教程", "priority": "must", "release": "Release 1", "points": 3, "description": "判断是否为首次进入简单难度"},
+            {"name": "介绍基本玩法", "priority": "must", "release": "Release 1", "points": 3, "description": "移动、瞄准、投掷、躲避"},
+            {"name": "介绍技能使用", "priority": "must", "release": "Release 1", "points": 3, "description": "仆人和女士技能介绍"},
+            {"name": "介绍狂欢时刻", "priority": "must", "release": "Release 1", "points": 3, "description": "后1分钟机制变化说明"}
+          ]
+        },
+        {
+          "name": "气泡语言",
+          "stories": [
+            {"name": "无枕头时点击左键发送气泡", "priority": "could", "release": "Release 3", "points": 2, "description": "如：哥！伦！比！亚！"},
+            {"name": "少女休息时的特殊气泡", "priority": "should", "release": "Release 2", "points": 2, "description": "如：桑多涅，停一下，好累"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "场景与美术表现",
+      "features": [
+        {
+          "name": "像素画风格",
+          "stories": [
+            {"name": "人物采用像素画（少女、人偶、仆人、女士）", "priority": "must", "release": "Release 1", "points": 5, "description": "所有角色采用像素画实现，同时作为实体"},
+            {"name": "实体碰撞判定", "priority": "must", "release": "Release 1", "points": 3, "description": "枕头与实体的碰撞检测"}
+          ]
+        },
+        {
+          "name": "场景设计",
+          "stories": [
+            {"name": "局内场景以短片为准", "priority": "should", "release": "Release 2", "points": 4, "description": "基于原神短片《最后的遗产》的场景设计"}
+          ]
+        },
+        {
+          "name": "多视角",
+          "stories": [
+            {"name": "第一人称视角", "priority": "could", "release": "Release 3", "points": 4, "description": "FPP视角选项"},
+            {"name": "第三人称视角", "priority": "could", "release": "Release 3", "points": 4, "description": "TPP视角选项"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "排行榜与成就",
+      "features": [
+        {
+          "name": "排行榜",
+          "stories": [
+            {"name": "无尽挑战命中榜", "priority": "could", "release": "Release 3", "points": 3, "description": "记录无尽挑战命中少女次数"},
+            {"name": "无尽挑战存活榜", "priority": "could", "release": "Release 3", "points": 3, "description": "记录无尽挑战存活时间"}
+          ]
+        },
+        {
+          "name": "成就系统",
+          "stories": [
+            {"name": "哥！伦！比！亚！（被击中一次）", "priority": "could", "release": "Release 3", "points": 2, "description": "基础成就"},
+            {"name": "哎呦（击中少女一次）", "priority": "could", "release": "Release 3", "points": 2, "description": "基础成就"},
+            {"name": "真拿你们没办法（两技能各使用一次）", "priority": "could", "release": "Release 3", "points": 2, "description": "技能使用成就"},
+            {"name": "温馨女子会（进入狂欢时刻）", "priority": "could", "release": "Release 3", "points": 2, "description": "体验狂欢时刻"},
+            {"name": "小玛丽安（进行一次无尽挑战）", "priority": "could", "release": "Release 3", "points": 2, "description": "体验无尽挑战"},
+            {"name": "最后的遗产（完成全部成就）", "priority": "could", "release": "Release 3", "points": 3, "description": "极致成就"}
+          ]
+        }
+      ]
+    },
+    {
+      "name": "枕头与进阶机制",
+      "features": [
+        {
+          "name": "枕头管理",
+          "stories": [
+            {"name": "场上最多6个枕头（双方合计）", "priority": "must", "release": "Release 1", "points": 2, "description": "少女初始拥有全部枕头"},
+            {"name": "枕头未击中时以技能球形式落在平面上", "priority": "should", "release": "Release 2", "points": 3, "description": "少女或玩家接触则获取枕头"},
+            {"name": "少女有枕头时按路线移动，无枕头时寻球", "priority": "should", "release": "Release 2", "points": 4, "description": "存在技能球则直线前往，否则继续路线"}
+          ]
+        }
+      ]
+    }
+  ]
+}
